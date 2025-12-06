@@ -1,0 +1,38 @@
+app-id: com.github.jpochyla.psst
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: psst-gui
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --share=network
+  - --device=dri
+  # For DBus media keys/MPRIS
+  - --own-name=org.mpris.MediaPlayer2.psst
+  # System tray
+  - --talk-name=org.kde.StatusNotifierWatcher
+
+modules:
+  - name: psst
+    buildsystem: simple
+    build-options:
+      env:
+        CARGO_HOME: /run/build/psst/cargo
+    build-commands:
+      - sed -i 's/Icon=psst/Icon=com.github.jpochyla.psst/' .pkg/psst.desktop
+      - cargo build --release --bin psst-gui --offline
+      - install -Dm755 target/release/psst-gui /app/bin/psst-gui
+      - install -Dm644 .pkg/psst.desktop /app/share/applications/com.github.jpochyla.psst.desktop
+      - install -Dm644 psst-gui/assets/logo_512.png /app/share/icons/hicolor/512x512/apps/com.github.jpochyla.psst.png
+      - install -Dm644 psst-gui/assets/logo_256.png /app/share/icons/hicolor/256x256/apps/com.github.jpochyla.psst.png
+      - install -Dm644 psst-gui/assets/logo_128.png /app/share/icons/hicolor/128x128/apps/com.github.jpochyla.psst.png
+      - install -Dm644 psst-gui/assets/logo_64.png /app/share/icons/hicolor/64x64/apps/com.github.jpochyla.psst.png
+      - install -Dm644 psst-gui/assets/logo_32.png /app/share/icons/hicolor/32x32/apps/com.github.jpochyla.psst.png
+      - install -Dm644 psst-gui/assets/logo.svg /app/share/icons/hicolor/scalable/apps/com.github.jpochyla.psst.svg
+    sources:
+      - cargo-sources.json
+      - type: dir
+        path: .
