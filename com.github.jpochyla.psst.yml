@@ -1,7 +1,10 @@
 app-id: com.github.jpochyla.psst
 runtime: org.gnome.Platform
-runtime-version: '46'
+runtime-version: '47'        # <--- CHANGE THIS from '46' to '47'
 sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+
 command: psst-gui
 finish-args:
   - --share=ipc
@@ -10,15 +13,15 @@ finish-args:
   - --socket=pulseaudio
   - --share=network
   - --device=dri
-  # For DBus media keys/MPRIS
   - --own-name=org.mpris.MediaPlayer2.psst
-  # System tray
   - --talk-name=org.kde.StatusNotifierWatcher
 
 modules:
   - name: psst
     buildsystem: simple
     build-options:
+      # Ensure this path is correct for the rust-stable extension
+      append-path: /usr/lib/sdk/rust-stable/bin
       env:
         CARGO_HOME: /run/build/psst/cargo
     build-commands:
